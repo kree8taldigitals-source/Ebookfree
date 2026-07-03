@@ -407,7 +407,7 @@
 
 <script>
   const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzQVdcS6oHYfZ_t-Y35yyQlOGqmSzX-mW9nO-2cQXJk6-cCymDXGhB0mnFAJi01p9gZ/exec";
-  const NEXT_PAGE = "https://kree8taldigitals-source.github.io/callpage/";
+  const NEXT_PAGE = "https://kree8taldigitals-source.github.io/businessonwer/";
   const lead = { name: "", email: "", phone: "" };
 
   function openOverlay(id){ document.getElementById(id).classList.add('active'); }
@@ -441,13 +441,24 @@
     openOverlay('overlay2');
   });
 
+  let isSubmitting = false;
+
   document.getElementById('step2Submit').addEventListener('click', async function(){
+    if(isSubmitting) return;
+
     const waInput = document.getElementById('waInput');
     const waCode = document.getElementById('waCode');
     const waField = document.getElementById('waField');
     if(!isValidPhone(waInput.value.trim())){ waField.classList.add('err'); return; }
     waField.classList.remove('err');
     lead.phone = waCode.value + " " + waInput.value.trim();
+
+    isSubmitting = true;
+    const submitBtn = document.getElementById('step2Submit');
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.7';
+    submitBtn.style.cursor = 'not-allowed';
+    submitBtn.textContent = 'Submitting…';
 
     if(WEBHOOK_URL){
       try{
@@ -459,6 +470,7 @@
       }catch(err){ console.error("Webhook submission failed:", err); }
     }
 
+    submitBtn.textContent = 'Submitted! Redirecting…';
     window.location.href = NEXT_PAGE;
   });
 
